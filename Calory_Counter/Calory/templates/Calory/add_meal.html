@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Meal</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+<h2>Add Meal</h2>
+
+<form method="post">
+{% csrf_token %}
+
+<select name="meal" required>
+    <option value="">Select Meal Type</option>
+    <option value="breakfast">Breakfast</option>
+    <option value="lunch">Lunch</option>
+    <option value="dinner">Dinner</option>
+    <option value="snack">Snack</option>
+</select>
+
+<select name="food" required>
+    <option value="">Select Food</option>
+
+    {% for f in foods %}
+        <option value="{{ f.id }}">{{ f.name }}</option>
+    {% endfor %}
+</select>
+
+<input type="number" name="qty" placeholder="Quantity" step="0.1" required>
+
+<button>Add Meal</button>
+
+</form>
+
+<div class="footer">
+<a href="/dashboard/">Back to Dashboard</a>
+</div>
+
+</div>
+
+</body>
+</html>

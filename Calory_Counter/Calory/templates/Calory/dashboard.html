@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+<h2>Dashboard</h2>
+
+<div class="card">
+    <p><strong>BMR:</strong> {{ profile.bmr }}</p>
+    <p><strong>Daily Target:</strong> {{ profile.target }} kcal</p>
+</div>
+
+<div class="card">
+    <p><strong>Today Calories:</strong> {{ total }} kcal</p>
+</div>
+
+<div class="message">
+    {{ msg }}
+</div>
+
+<div class="nav">
+    <a href="/add-meal/">Add Meal</a>
+    <a href="/logout/">Logout</a>
+</div>
+
+</div>
+
+</body>
+</html>

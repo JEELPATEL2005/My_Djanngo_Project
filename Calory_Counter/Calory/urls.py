@@ -1,7 +1,17 @@
 from django.urls import path
 from . import views
 
+urlpatterns=[
 
-urlpatterns = [
-    path('abc/', views.Home, name='home'),
+    path('',views.user_login,name='login'),
+
+    path('register/',views.register),
+
+    path('logout/',views.user_logout),
+
+    path('profile/',views.profile,name='profile'),
+
+    path('dashboard/',views.dashboard,name='dashboard'),
+
+    path('add-meal/',views.add_meal),
 ]

@@ -1,0 +1,107 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(to right, #43cea2, #185a9d);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* MAIN CONTAINER */
+.container {
+    background: white;
+    width: 400px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* HEADINGS */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #185a9d;
+}
+
+/* INPUTS */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    background: #185a9d;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0f3c6b;
+}
+
+/* LINKS */
+a {
+    text-decoration: none;
+    color: #185a9d;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* DASHBOARD CARDS */
+.card {
+    background: #f0f7ff;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border-left: 4px solid #185a9d;
+}
+
+/* MESSAGE */
+.message {
+    text-align: center;
+    font-weight: bold;
+    color: #2e7d32;
+    margin: 10px 0;
+}
+
+/* ERROR MESSAGE */
+.error {
+    text-align: center;
+    color: red;
+    margin-bottom: 10px;
+}
+
+/* NAV LINKS */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+/* FOOTER TEXT */
+.footer {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 15px;
+    color: #555;
+}

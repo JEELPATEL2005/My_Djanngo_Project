@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <title>
   {% block title%}
       default value
@@ -12,7 +13,9 @@
   </title>
 </head>
 <body>
-  <h1> This is a layout page </h1>
+  {% block content %}
+  default content
+  {% endblock %}
   
 </body>
 </html>

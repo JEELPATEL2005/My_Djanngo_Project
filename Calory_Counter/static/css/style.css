@@ -1,0 +1,169 @@
+/* ==============================
+   Global Reset
+============================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ==============================
+   Body
+============================== */
+body {
+    background-color: #f4f6f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* ==============================
+   Header / Navbar
+============================== */
+header {
+    background-color: #1f2933;
+    color: #fff;
+    padding: 15px 40px;
+}
+
+header h1 {
+    display: inline-block;
+    font-size: 22px;
+}
+
+nav {
+    float: right;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 16px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* ==============================
+   Main Container
+============================== */
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+/* ==============================
+   Cards / Boxes
+============================== */
+.card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ==============================
+   Buttons
+============================== */
+.btn {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.btn:hover {
+    background: #1d4ed8;
+}
+
+/* ==============================
+   Forms
+============================== */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* ==============================
+   Table
+============================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+table th,
+table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background: #2563eb;
+    color: white;
+}
+
+/* ==============================
+   Footer
+============================== */
+footer {
+    background: #1f2933;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+}
+
+/* ==============================
+   Responsive Design
+============================== */
+@media (max-width: 768px) {
+
+    header {
+        text-align: center;
+    }
+
+    nav {
+        float: none;
+        margin-top: 10px;
+    }
+
+    nav a {
+        display: block;
+        margin: 8px 0;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}

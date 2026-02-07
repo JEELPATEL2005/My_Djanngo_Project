@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile Setup</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+<h2>Profile Setup</h2>
+
+<form method="post">
+{% csrf_token %}
+
+<input type="number" name="age" placeholder="Age" required>
+
+<input type="number" name="height" placeholder="Height (cm)" required>
+
+<input type="number" name="weight" placeholder="Weight (kg)" required>
+
+<select name="gender" required>
+    <option value="">Select Gender</option>
+    <option value="M">Male</option>
+    <option value="F">Female</option>
+</select>
+
+<select name="activity" required>
+    <option value="">Activity Level</option>
+    <option value="low">Low</option>
+    <option value="medium">Medium</option>
+    <option value="high">High</option>
+</select>
+
+<button>Save Profile</button>
+
+</form>
+
+</div>
+
+</body>
+</html>
