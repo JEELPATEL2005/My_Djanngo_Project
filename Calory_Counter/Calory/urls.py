@@ -14,4 +14,9 @@ urlpatterns=[
     path('dashboard/',views.dashboard,name='dashboard'),
 
     path('add-meal/',views.add_meal),
+    
+    path("bot/", views.bot_page, name="bot_page"),
+
+    path("bot/api/", views.bot_api, name="bot_api"),
+
 ]

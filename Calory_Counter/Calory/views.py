@@ -9,6 +9,12 @@ from .models import *
 from .utils import *
 
 
+import json
+import requests
+from django.http import JsonResponse
+from django.conf import settings
+
+
 # ---------------- REGISTER ----------------
 def register(request):
 
@@ -189,3 +195,36 @@ def update_summary(user,today,total,profile):
             'streak':streak
         }
     )
+
+# ---------------- BOT PAGE ----------------
+def bot_page(request):
+    return render(request, "Calory/bot.html")
+
+
+@login_required
+def bot_api(request):
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_msg = data.get("text", "")
+
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={settings.GEMINI_API_KEY}"
+
+        payload = {
+            "contents": [
+                {"parts": [{"text": user_msg}]}
+            ]
+        }
+
+        response = requests.post(url, json=payload)
+        result = response.json()
+
+        if response.status_code != 200 or "candidates" not in result:
+            # return API error safely
+            return JsonResponse(
+                {"reply": "API error. Check API key, billing, or request limits.", "details": result},
+                status=502
+            )
+
+        reply = result["candidates"][0]["content"]["parts"][0]["text"]
+        return JsonResponse({"reply": reply})

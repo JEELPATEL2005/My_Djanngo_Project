@@ -6,8 +6,28 @@
     <title>Dashboard</title>
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+
+  .bot-btn{
+  padding:10px 15px;
+  background:#2196f3;
+  color:white;
+  text-decoration:none;
+  border-radius:5px;
+}
+
+</style>
 </head>
 <body>
+
+
+
+
+    <a href="{% url 'bot_page' %}" class="bot-btn">
+    🤖 Open Chat Bot
+</a>
+
 
 <div class="container">
 

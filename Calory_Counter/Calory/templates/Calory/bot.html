@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Bot</title>
+
+<style>
+body{font-family:Arial;background:#eee;}
+
+.box{
+  width:400px;
+  margin:50px auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
+
+#chat{
+  height:300px;
+  border:1px solid #ccc;
+  overflow:auto;
+  padding:10px;
+}
+
+input{width:75%;padding:8px;}
+button{padding:8px;}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h3>🤖 AI Bot</h3>
+
+<div id="chat"></div>
+
+<input id="q" placeholder="Ask anything...">
+<button onclick="send()">Send</button>
+
+<br><br>
+<a href="{% url 'dashboard' %}">⬅ Back</a>
+
+</div>
+
+
+<script>
+
+function send(){
+
+ let msg=document.getElementById("q").value;
+ if(msg=="") return;
+
+ let chat=document.getElementById("chat");
+
+ chat.innerHTML+="<p><b>You:</b> "+msg+"</p>";
+
+ fetch("/bot/api/",{
+
+   method:"POST",
+
+   headers:{
+     "Content-Type":"application/json",
+     "X-CSRFToken":"{{ csrf_token }}"
+   },
+
+   body:JSON.stringify({text:msg})
+
+ })
+
+ .then(r=>r.json())
+ .then(d=>{
+
+   chat.innerHTML+="<p><b>Bot:</b> "+d.reply+"</p>";
+   chat.scrollTop=chat.scrollHeight;
+
+ });
+
+ document.getElementById("q").value="";
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(name + "=")) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie("csrftoken");
+
+</script>
+
+</body>
+</html>
