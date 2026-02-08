@@ -1,4 +1,3 @@
-
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
@@ -15,9 +14,16 @@ def register(request):
 
     if request.method=="POST":
 
+        email = request.POST['email']
+
+        if User.objects.filter(username=email).exists():
+            return render(request,'Calory/register.html', {
+                'error': 'User already exists. Please log in.'
+            })
+
         User.objects.create_user(
-            username=request.POST['email'],
-            email=request.POST['email'],
+            username=email,
+            email=email,
             password=request.POST['password']
         )
 
@@ -115,7 +121,7 @@ def dashboard(request):
 
     update_summary(request.user,today,total,profile)
 
-    return render(request,'dashboard.html',{
+    return render(request,'Calory/dashboard.html',{
         'profile':profile,
         'total':round(total,2),
         'msg':msg
