@@ -19,10 +19,31 @@ def calculate_tdee(bmr,activity):
 
 def motivation(status):
 
-    if status=="good":
-        return "🔥 Great job! Keep going!"
+    if status == "good":
+        return "🔥 Great job! You are on track today."
 
-    if status=="over":
-        return "⚠️ You exceeded your target. Be careful!"
+    elif status == "over":
+        return "⚠️ You exceeded your calorie limit today."
 
-    return "💪 You can do better tomorrow!"
+    else:
+        return "🙂 Keep going! Try to stay within your goal."
+
+
+def detect_deficiency(meals):
+
+    protein = sum(m.food.protein * m.qty for m in meals)
+    carbs = sum(m.food.carbs * m.qty for m in meals)
+    fat = sum(m.food.fat * m.qty for m in meals)
+
+
+    if protein < 50:
+        return "⚠️ Low Protein"
+
+    if carbs < 130:
+        return "⚠️ Low Carbs"
+
+    if fat < 20:
+        return "⚠️ Low Fat"
+
+    return "✅ Balanced Diet"
+

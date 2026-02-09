@@ -21,6 +21,26 @@
 </head>
 <body>
 
+    <h3>Last 7 Days</h3>
+
+<ul>
+{% for d in history %}
+<li>
+{{ d.date }} - {{ d.total_calories }} kcal
+{% if d.healthy %} ✅ {% else %} ❌ {% endif %}
+</li>
+{% endfor %}
+</ul>
+
+<h3>Nutrition Status</h3>
+
+<p>{{ deficiency }}</p>
+
+
+
+<a href="{% url 'update_weight' %}">
+    Update Weight
+</a>
 
 
 

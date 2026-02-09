@@ -2,17 +2,16 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
+from .utils import detect_deficiency
 from datetime import date,timedelta
-
 from .models import *
 from .utils import *
-
-
 import json
 import requests
 from django.http import JsonResponse
 from django.conf import settings
+from django.utils import timezone
+
 
 
 # ---------------- REGISTER ----------------
@@ -66,71 +65,151 @@ def user_logout(request):
 @login_required
 def profile(request):
 
-    if request.method=="POST":
+    profile = Profile.objects.filter(user=request.user).first()
 
-        age=request.POST['age']
-        height=request.POST['height']
-        weight=request.POST['weight']
-        gender=request.POST['gender']
-        activity=request.POST['activity']
+    # If profile already exists → go dashboard
+    if profile and request.method != "POST":
+        return redirect("dashboard")
 
-        bmr=calculate_bmr(
+
+    if request.method == "POST":
+
+        age = request.POST['age']
+        height = request.POST['height']
+        weight = request.POST['weight']
+        gender = request.POST['gender']
+        activity = request.POST['activity']
+
+
+        bmr = calculate_bmr(
             int(age),
             float(height),
             float(weight),
             gender
         )
 
-        target=calculate_tdee(bmr,activity)
+        target = calculate_tdee(bmr, activity)
+
 
         Profile.objects.update_or_create(
+
             user=request.user,
+
             defaults={
-                'age':age,
-                'height':height,
-                'weight':weight,
-                'gender':gender,
-                'activity':activity,
-                'bmr':round(bmr,2),
-                'target':round(target,2)
+                'age': age,
+                'height': height,
+                'weight': weight,
+                'gender': gender,
+                'activity': activity,
+                'bmr': round(bmr,2),
+                'target': round(target,2)
             }
         )
 
-        return redirect('dashboard')
+        return redirect("dashboard")
+
 
     return render(request,'Calory/profile.html')
-
 
 # ---------------- DASHBOARD ----------------
 @login_required
 def dashboard(request):
 
-    today=date.today()
+    today = date.today()
 
-    profile=Profile.objects.get(user=request.user)
+    # Get profile
+    try:
+        profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        return redirect('profile')
 
-    meals=Meal.objects.filter(
+
+    # ✅ Get today's meals (FIXED)
+    meals = Meal.objects.filter(
         user=request.user,
         date=today
     )
 
-    total=sum(m.calories for m in meals)
 
-    status="normal"
+    # Calculate total calories
+    total = sum(m.calories for m in meals)
 
-    if total>profile.target:
-        status="over"
-    elif total>=0.9*profile.target:
-        status="good"
 
-    msg=motivation(status)
+    # Status
+    status = "normal"
 
-    update_summary(request.user,today,total,profile)
+    if total > profile.target:
+        status = "over"
 
-    return render(request,'Calory/dashboard.html',{
-        'profile':profile,
-        'total':round(total,2),
-        'msg':msg
+    elif total >= 0.9 * profile.target:
+        status = "good"
+
+
+    # Motivation
+    msg = motivation(status)
+
+
+    # Save daily summary
+    update_summary(request.user, today, total, profile)
+
+
+    # Get saved summary
+    summary = DailySummary.objects.filter(
+        user=request.user,
+        date=today
+    ).first()
+
+
+    # Get deficiency
+    deficiency = summary.deficiency if summary else "Not calculated"
+
+
+    # Render page
+    return render(request, 'Calory/dashboard.html', {
+
+        'profile': profile,
+        'total': round(total, 2),
+        'msg': msg,
+        'deficiency': deficiency,
+        'meals': meals   # (optional: for showing meals list)
+    })
+
+@login_required
+def update_weight(request):
+
+    profile = Profile.objects.get(user=request.user)
+
+    if request.method == "POST":
+
+        new_weight = float(request.POST["weight"])
+
+
+        # Recalculate BMR
+        bmr = calculate_bmr(
+            profile.age,
+            profile.height,
+            new_weight,
+            profile.gender
+        )
+
+
+        # Recalculate Target
+        target = calculate_tdee(bmr, profile.activity)
+
+
+        # Save
+        profile.weight = new_weight
+        profile.bmr = round(bmr,2)
+        profile.target = round(target,2)
+
+        profile.save()
+
+
+        return redirect("dashboard")
+
+
+    return render(request,"Calory/update_weight.html",{
+        "profile": profile
     })
 
 
@@ -138,24 +217,29 @@ def dashboard(request):
 @login_required
 def add_meal(request):
 
-    foods=Food.objects.filter(verified=True)
+    foods = Food.objects.filter(verified=True)
 
     if request.method=="POST":
 
-        food=Food.objects.get(id=request.POST['food'])
-        qty=float(request.POST['qty'])
+        food = Food.objects.get(id=request.POST['food'])
+        qty = float(request.POST['qty'])
 
-        grams=food.serving_grams*qty
+        grams = food.serving_grams * qty
 
-        cal=(food.calories_100g/100)*grams
+        cal = (food.calories_100g / 100) * grams
 
-        Meal.objects.create(
+
+        Meal.objects.update_or_create(
+
             user=request.user,
             food=food,
-            date=date.today(),
+            date=timezone.now(),   # ✅ FIX
             meal=request.POST['meal'],
-            qty=qty,
-            calories=round(cal,2)
+
+            defaults={
+                'qty': qty,
+                'calories': round(cal,2)
+            }
         )
 
         return redirect('dashboard')
@@ -164,35 +248,50 @@ def add_meal(request):
 
 
 # ---------------- SUMMARY ----------------
-def update_summary(user,today,total,profile):
+def update_summary(user, today, total, profile):
 
-    yesterday=today-timedelta(days=1)
+    yesterday = today - timedelta(days=1)
 
-    prev=DailySummary.objects.filter(
+
+    prev = DailySummary.objects.filter(
         user=user,
         date=yesterday,
         healthy=True
     ).first()
 
-    streak=0
 
-    if prev:
-        streak=prev.streak
+    streak = prev.streak if prev else 0
 
-    healthy=(0.9*profile.target<=total<=1.1*profile.target)
+
+    # Get today's meals
+    meals = Meal.objects.filter(
+        user=user,
+        date=today
+    )
+
+
+    deficiency = detect_deficiency(meals)
+
+
+    healthy = (0.9 * profile.target <= total <= 1.1 * profile.target)
+
 
     if healthy:
-        streak+=1
+        streak += 1
     else:
-        streak=0
+        streak = 0
+
 
     DailySummary.objects.update_or_create(
+
         user=user,
         date=today,
+
         defaults={
-            'total_calories':total,
-            'healthy':healthy,
-            'streak':streak
+            'total_calories': total,
+            'healthy': healthy,
+            'streak': streak,
+            'deficiency': deficiency
         }
     )
 
