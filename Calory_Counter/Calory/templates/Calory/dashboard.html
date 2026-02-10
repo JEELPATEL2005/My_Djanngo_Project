@@ -299,6 +299,11 @@
             <h1>Dashboard</h1>
         </div>
         <div class="header-actions">
+            {% if user.admin_profile.is_active %}
+            <a href="{% url 'admin_dashboard' %}" class="action-btn" style="background: #ffd700; color: #333;">
+                <i class="fas fa-crown"></i> Admin Panel
+            </a>
+            {% endif %}
             <a href="{% url 'bot_page' %}" class="action-btn bot-btn">
                 <i class="fas fa-robot"></i> Chat Bot
             </a>
