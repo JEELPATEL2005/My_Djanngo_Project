@@ -1,46 +1,342 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Add Meal</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Meal - Calory Counter</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Add Meal Page Specific Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .meal-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .meal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .meal-header h2 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .meal-header p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .logo-icon {
+            font-size: 40px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: #667eea;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+            padding-right: 40px;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-input .input-wrapper {
+            flex: 1;
+        }
+
+        .quantity-unit {
+            font-size: 13px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .add-btn:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .info-box i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        .back-link-container {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            transform: translateX(-3px);
+        }
+
+        .meal-type-icons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .meal-badge {
+            padding: 8px 12px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .meal-badge:hover {
+            background: #e8e8e8;
+        }
+
+        @media (max-width: 600px) {
+            .meal-container {
+                padding: 30px 20px;
+                max-width: 90%;
+            }
+
+            .meal-header h2 {
+                font-size: 24px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 10px 12px 10px 40px;
+                font-size: 13px;
+            }
+
+            .quantity-input {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .quantity-unit {
+                margin-top: -15px;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
+<div class="meal-container">
 
-<h2>Add Meal</h2>
+    <div class="meal-header">
+        <div class="logo-icon">
+            <i class="fas fa-utensils"></i>
+        </div>
+        <h2>Add Meal</h2>
+        <p>Log your food intake for the day</p>
+    </div>
 
-<form method="post">
-{% csrf_token %}
+    <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        Select meal type, food item, and enter quantity to track your calories
+    </div>
 
-<select name="meal" required>
-    <option value="">Select Meal Type</option>
-    <option value="breakfast">Breakfast</option>
-    <option value="lunch">Lunch</option>
-    <option value="dinner">Dinner</option>
-    <option value="snack">Snack</option>
-</select>
+    <form method="post">
+        {% csrf_token %}
 
-<select name="food" required>
-    <option value="">Select Food</option>
+        <!-- Meal Type Selection -->
+        <div class="form-group">
+            <label for="meal">Meal Type</label>
+            <div class="input-wrapper">
+                <i class="fas fa-clock"></i>
+                <select id="meal" name="meal" required>
+                    <option value="">Select Meal Type</option>
+                    <option value="breakfast">🌅 Breakfast</option>
+                    <option value="lunch">🍽️ Lunch</option>
+                    <option value="dinner">🌙 Dinner</option>
+                    <option value="snack">🍿 Snack</option>
+                </select>
+            </div>
+        </div>
 
-    {% for f in foods %}
-        <option value="{{ f.id }}">{{ f.name }}</option>
-    {% endfor %}
-</select>
+        <!-- Food Selection -->
+        <div class="form-group">
+            <label for="food">Food Item</label>
+            <div class="input-wrapper">
+                <i class="fas fa-apple-alt"></i>
+                <select id="food" name="food" required>
+                    <option value="">Select Food</option>
+                    {% for f in foods %}
+                        <option value="{{ f.id }}">{{ f.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
 
-<input type="number" name="qty" placeholder="Quantity" step="0.1" required>
+        <!-- Quantity Input -->
+        <div class="form-group">
+            <label for="qty">Quantity</label>
+            <div class="input-wrapper">
+                <i class="fas fa-weight"></i>
+                <input 
+                    type="number" 
+                    id="qty" 
+                    name="qty" 
+                    placeholder="Enter quantity" 
+                    step="0.1" 
+                    min="0"
+                    required
+                >
+            </div>
+            <div style="margin-top: 6px; font-size: 12px; color: #999;">
+                <i class="fas fa-info-circle"></i> Usually measured in grams (g)
+            </div>
+        </div>
 
-<button>Add Meal</button>
+        <!-- Add Button -->
+        <button type="submit" class="add-btn">
+            <i class="fas fa-plus-circle"></i> Add to Meal Log
+        </button>
+    </form>
 
-</form>
-
-<div class="footer">
-<a href="/dashboard/">Back to Dashboard</a>
-</div>
+    <!-- Back Link -->
+    <div class="back-link-container">
+        <a href="/dashboard/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
 
 </div>
 

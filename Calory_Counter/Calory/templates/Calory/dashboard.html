@@ -1,75 +1,388 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Calory Counter</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Dashboard Specific Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  .bot-btn{
-  padding:10px 15px;
-  background:#2196f3;
-  color:white;
-  text-decoration:none;
-  border-radius:5px;
-}
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-</style>
+        .dashboard-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title h1 {
+            color: #667eea;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header-title i {
+            font-size: 32px;
+            color: #667eea;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .action-btn.secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .action-btn.danger {
+            background: #ff6b6b;
+        }
+
+        .action-btn.danger:hover {
+            background: #ff5252;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-left: 5px solid #667eea;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card.bmr {
+            border-left-color: #667eea;
+        }
+
+        .stat-card.calories {
+            border-left-color: #ff6b6b;
+        }
+
+        .stat-card.nutrition {
+            border-left-color: #51cf66;
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label i {
+            font-size: 16px;
+            color: #667eea;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-subtitle {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .history-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            font-size: 24px;
+        }
+
+        .history-list {
+            list-style: none;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+
+        .history-date {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .history-calories {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .history-status {
+            font-size: 20px;
+            margin-left: 10px;
+        }
+
+        .nutrition-info {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #51cf66;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #51cf66;
+            font-weight: 500;
+        }
+
+        .bot-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bot-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .history-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .history-calories,
+            .history-status {
+                margin-left: 0;
+                margin-top: 8px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <h3>Last 7 Days</h3>
+<div class="dashboard-wrapper">
 
-<ul>
-{% for d in history %}
-<li>
-{{ d.date }} - {{ d.total_calories }} kcal
-{% if d.healthy %} ✅ {% else %} ❌ {% endif %}
-</li>
-{% endfor %}
-</ul>
+    <!-- Header with Title and Actions -->
+    <div class="dashboard-header">
+        <div class="header-title">
+            <i class="fas fa-chart-line"></i>
+            <h1>Dashboard</h1>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'bot_page' %}" class="action-btn bot-btn">
+                <i class="fas fa-robot"></i> Chat Bot
+            </a>
+            <a href="{% url 'update_weight' %}" class="action-btn secondary">
+                <i class="fas fa-weight"></i> Update Weight
+            </a>
+            <a href="/add-meal/" class="action-btn">
+                <i class="fas fa-plus"></i> Add Meal
+            </a>
+            <a href="/logout/" class="action-btn danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
 
-<h3>Nutrition Status</h3>
+    <!-- Stats Grid -->
+    <div class="dashboard-grid">
+        <!-- BMR & Target Card -->
+        <div class="stat-card bmr">
+            <div class="stat-label">
+                <i class="fas fa-fire"></i> Your Goals
+            </div>
+            <div style="margin-bottom: 15px;">
+                <div class="stat-subtitle">
+                    <strong>BMR:</strong> {{ profile.bmr }} kcal/day
+                </div>
+                <div class="stat-subtitle" style="margin-top: 8px;">
+                    <strong>Daily Target:</strong> {{ profile.target }} kcal
+                </div>
+            </div>
+        </div>
 
-<p>{{ deficiency }}</p>
+        <!-- Today's Calories Card -->
+        <div class="stat-card calories">
+            <div class="stat-label">
+                <i class="fas fa-utensils"></i> Today's Intake
+            </div>
+            <div class="stat-value">{{ total }} kcal</div>
+            <div class="stat-subtitle">Out of {{ profile.target }} kcal target</div>
+        </div>
 
+        <!-- Nutrition Status Card -->
+        <div class="stat-card nutrition">
+            <div class="stat-label">
+                <i class="fas fa-check-circle"></i> Nutrition Status
+            </div>
+            <div class="nutrition-info">
+                {{ deficiency }}
+            </div>
+        </div>
+    </div>
 
+    <!-- Message Display -->
+    {% if msg %}
+    <div class="message">
+        <i class="fas fa-info-circle"></i> {{ msg }}
+    </div>
+    {% endif %}
 
-<a href="{% url 'update_weight' %}">
-    Update Weight
-</a>
-
-
-
-    <a href="{% url 'bot_page' %}" class="bot-btn">
-    🤖 Open Chat Bot
-</a>
-
-
-<div class="container">
-
-<h2>Dashboard</h2>
-
-<div class="card">
-    <p><strong>BMR:</strong> {{ profile.bmr }}</p>
-    <p><strong>Daily Target:</strong> {{ profile.target }} kcal</p>
-</div>
-
-<div class="card">
-    <p><strong>Today Calories:</strong> {{ total }} kcal</p>
-</div>
-
-<div class="message">
-    {{ msg }}
-</div>
-
-<div class="nav">
-    <a href="/add-meal/">Add Meal</a>
-    <a href="/logout/">Logout</a>
-</div>
+    <!-- History Section -->
+    <div class="history-section">
+        <div class="section-title">
+            <i class="fas fa-history"></i> Last 7 Days
+        </div>
+        <ul class="history-list">
+            {% if history %}
+                {% for d in history %}
+                <li class="history-item">
+                    <div>
+                        <div class="history-date">{{ d.date|date:"D, M d, Y" }}</div>
+                        <div class="history-calories">{{ d.total_calories }} kcal</div>
+                    </div>
+                    <div class="history-status">
+                        {% if d.healthy %} ✅ {% else %} ❌ {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            {% else %}
+                <li class="history-item">
+                    <p style="color: #999;">No history data available yet</p>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 
 </div>
 
