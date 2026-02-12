@@ -36,14 +36,20 @@ def detect_deficiency(meals):
     fat = sum(m.food.fat * m.qty for m in meals)
 
 
-    if protein < 50:
+    if protein < 50 and carbs >= 130 and fat >= 20:
         return "⚠️ Low Protein"
 
-    if carbs < 130:
+    if carbs < 130 and protein >= 50 and fat >= 20:
         return "⚠️ Low Carbs"
 
-    if fat < 20:
+    if fat < 20 and protein >= 50 and carbs >= 130:
         return "⚠️ Low Fat"
+    
+    if protein < 50 and carbs < 130 and fat < 20:
+        return "⚠️ Low protein, carbs, and fat"
+    
+    if protein >= 50 and carbs >= 130 and fat >= 20:
+        return "✅ Healthy Diet"
+    
 
-    return "✅ Balanced Diet"
 

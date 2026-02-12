@@ -16,6 +16,9 @@ urlpatterns=[
     path('add-meal/',views.add_meal),
     
     path("update-weight/", views.update_weight, name="update_weight"),
+    
+    path("summary/", views.summary_page, name="summary"),
+
 
     path("bot/", views.bot_page, name="bot_page"),
 

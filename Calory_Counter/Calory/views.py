@@ -115,64 +115,309 @@ def profile(request):
 @login_required
 def dashboard(request):
 
-    today = date.today()
+    today = date.today()   # Always today
+
 
     # Get profile
     try:
         profile = Profile.objects.get(user=request.user)
     except Profile.DoesNotExist:
-        return redirect('profile')
+        return redirect("profile")
 
 
-    # ✅ Get today's meals (FIXED)
+    # Get today's meals
     meals = Meal.objects.filter(
         user=request.user,
         date=today
     )
 
 
+    # Separate by meal type
+    breakfasts = meals.filter(meal="breakfast")
+    lunches = meals.filter(meal="lunch")
+    dinners = meals.filter(meal="dinner")
+    snacks = meals.filter(meal="snack")
+
+
     # Calculate total calories
     total = sum(m.calories for m in meals)
 
 
-    # Status
+    # Status check
     status = "normal"
 
     if total > profile.target:
         status = "over"
-
     elif total >= 0.9 * profile.target:
         status = "good"
 
 
-    # Motivation
+    # Motivation message
     msg = motivation(status)
 
 
-    # Save daily summary
+    # ✅ Recalculate + Save summary every time
     update_summary(request.user, today, total, profile)
 
 
-    # Get saved summary
+    # ✅ Read updated summary
     summary = DailySummary.objects.filter(
         user=request.user,
         date=today
     ).first()
 
 
-    # Get deficiency
+    # Get deficiency from DB
     deficiency = summary.deficiency if summary else "Not calculated"
 
 
-    # Render page
-    return render(request, 'Calory/dashboard.html', {
+    return render(request, "Calory/dashboard.html", {
 
-        'profile': profile,
-        'total': round(total, 2),
-        'msg': msg,
-        'deficiency': deficiency,
-        'meals': meals   # (optional: for showing meals list)
+        "profile": profile,
+        "total": round(total, 2),
+        "msg": msg,
+        "deficiency": deficiency,
+
+        # Meal groups
+        "breakfasts": breakfasts,
+        "lunches": lunches,
+        "dinners": dinners,
+        "snacks": snacks,
     })
+
+
+
+
+# ---------------- ADD MEAL ----------------
+@login_required
+def add_meal(request):
+
+    foods = Food.objects.filter(verified=True).order_by("name")
+
+    if request.method == "POST":
+
+        food = Food.objects.get(id=request.POST['food'])
+        qty = float(request.POST['qty'])
+
+        grams = food.serving_grams * qty
+        cal = (food.calories_100g / 100) * grams
+
+        meal_date = timezone.localdate()   # today's date
+
+
+        # ✅ ALWAYS CREATE NEW MEAL
+        Meal.objects.create(
+
+            user=request.user,
+            food=food,
+            date=meal_date,
+            meal=request.POST['meal'],
+
+            qty=qty,
+            calories=round(cal, 2)
+        )
+
+
+        # Update summary
+        profile = Profile.objects.get(user=request.user)
+
+        meals = Meal.objects.filter(
+            user=request.user,
+            date=meal_date
+        )
+
+        total = sum(m.calories for m in meals)
+
+        update_summary(request.user, meal_date, total, profile)
+
+
+        return redirect('dashboard')
+
+
+    return render(request,'Calory/add_meal.html',{'foods':foods})
+
+
+
+def update_summary(user, today, total, profile):
+
+    yesterday = today - timedelta(days=1)
+
+    prev = DailySummary.objects.filter(
+        user=user,
+        date=yesterday,
+        healthy=True
+    ).first()
+
+    streak = prev.streak if prev else 0
+
+
+    meals = Meal.objects.filter(
+        user=user,
+        date=today
+    )
+
+    deficiency = detect_deficiency(meals)
+
+
+    healthy = (0.9 * profile.target <= total <= 1.1 * profile.target)
+
+    if healthy:
+        streak += 1
+    else:
+        streak = 0
+
+
+    # ✅ Save target of that day
+    DailySummary.objects.update_or_create(
+
+        user=user,
+        date=today,
+
+        defaults={
+            'total_calories': total,
+            'healthy': healthy,
+            'streak': streak,
+            'deficiency': deficiency,
+
+            'target': profile.target   # ⭐ IMPORTANT
+        }
+    )
+
+
+
+@login_required
+def summary_page(request):
+
+    date_str = request.GET.get("date")
+
+    if date_str:
+        selected_date = date.fromisoformat(date_str)
+    else:
+        selected_date = date.today()
+
+
+    profile = Profile.objects.get(user=request.user)
+
+
+    meals = Meal.objects.filter(
+        user=request.user,
+        date=selected_date
+    )
+
+
+    total = sum(m.calories for m in meals)
+
+
+    # ✅ Get daily summary
+    summary = DailySummary.objects.filter(
+        user=request.user,
+        date=selected_date
+    ).first()
+
+
+    # ✅ Freeze old target
+    target = summary.target if summary else profile.target
+
+
+    deficiency = summary.deficiency if summary else "Not calculated"
+
+
+    return render(request,"Calory/summary.html",{
+
+        "date": selected_date,
+        "meals": meals,
+        "total": round(total,2),
+
+        "target": target,        # ✅ pass target
+        "deficiency": deficiency,
+
+    })
+
+
+
+# ---------------- BOT PAGE ----------------
+def bot_page(request):
+    return render(request, "Calory/bot.html")
+
+
+@login_required
+def bot_api(request):
+
+    if request.method != "POST":
+        return JsonResponse({"reply": "Invalid request."}, status=400)
+
+
+    try:
+        data = json.loads(request.body)
+        user_msg = data.get("text", "").strip()
+
+        if not user_msg:
+            return JsonResponse({"reply": "Empty message."})
+
+
+        url = (
+            "https://generativelanguage.googleapis.com/v1beta/models/"
+            "gemini-1.5-flash:generateContent"
+            f"?key={settings.GEMINI_API_KEY}"
+        )
+
+
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": user_msg}
+                    ]
+                }
+            ]
+        }
+
+
+        response = requests.post(
+            url,
+            json=payload,
+            timeout=20   # ✅ prevent hanging
+        )
+
+
+        result = response.json()
+
+
+        # ❗ API error
+        if response.status_code != 200:
+            return JsonResponse({
+                "reply": "Gemini API error. Try later.",
+                "details": result
+            }, status=502)
+
+
+        # ❗ Empty response
+        if "candidates" not in result:
+            return JsonResponse({
+                "reply": "No response from AI."
+            })
+
+
+        reply = result["candidates"][0]["content"]["parts"][0]["text"]
+
+
+        return JsonResponse({"reply": reply})
+
+
+    except requests.exceptions.Timeout:
+        return JsonResponse({
+            "reply": "AI is taking too long. Try again."
+        })
+
+
+    except Exception as e:
+
+        print("Bot Error:", e)
+
+        return JsonResponse({
+            "reply": "Server error. Contact admin."
+        }, status=500)
+
 
 @login_required
 def update_weight(request):
@@ -197,12 +442,24 @@ def update_weight(request):
         target = calculate_tdee(bmr, profile.activity)
 
 
-        # Save
+        # Save profile
         profile.weight = new_weight
         profile.bmr = round(bmr,2)
         profile.target = round(target,2)
-
         profile.save()
+
+
+        # ✅ Update ONLY today summary
+        today = date.today()
+
+        summary = DailySummary.objects.filter(
+            user=request.user,
+            date=today
+        ).first()
+
+        if summary:
+            summary.target = profile.target
+            summary.save()
 
 
         return redirect("dashboard")
@@ -212,118 +469,3 @@ def update_weight(request):
         "profile": profile
     })
 
-
-# ---------------- ADD MEAL ----------------
-@login_required
-def add_meal(request):
-
-    foods = Food.objects.filter(verified=True)
-
-    if request.method=="POST":
-
-        food = Food.objects.get(id=request.POST['food'])
-        qty = float(request.POST['qty'])
-
-        grams = food.serving_grams * qty
-
-        cal = (food.calories_100g / 100) * grams
-
-
-        Meal.objects.update_or_create(
-
-            user=request.user,
-            food=food,
-            date=timezone.now(),   # ✅ FIX
-            meal=request.POST['meal'],
-
-            defaults={
-                'qty': qty,
-                'calories': round(cal,2)
-            }
-        )
-
-        return redirect('dashboard')
-
-    return render(request,'Calory/add_meal.html',{'foods':foods})
-
-
-# ---------------- SUMMARY ----------------
-def update_summary(user, today, total, profile):
-
-    yesterday = today - timedelta(days=1)
-
-
-    prev = DailySummary.objects.filter(
-        user=user,
-        date=yesterday,
-        healthy=True
-    ).first()
-
-
-    streak = prev.streak if prev else 0
-
-
-    # Get today's meals
-    meals = Meal.objects.filter(
-        user=user,
-        date=today
-    )
-
-
-    deficiency = detect_deficiency(meals)
-
-
-    healthy = (0.9 * profile.target <= total <= 1.1 * profile.target)
-
-
-    if healthy:
-        streak += 1
-    else:
-        streak = 0
-
-
-    DailySummary.objects.update_or_create(
-
-        user=user,
-        date=today,
-
-        defaults={
-            'total_calories': total,
-            'healthy': healthy,
-            'streak': streak,
-            'deficiency': deficiency
-        }
-    )
-
-# ---------------- BOT PAGE ----------------
-def bot_page(request):
-    return render(request, "Calory/bot.html")
-
-
-@login_required
-def bot_api(request):
-
-    if request.method == "POST":
-        data = json.loads(request.body)
-        user_msg = data.get("text", "")
-
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={settings.GEMINI_API_KEY}"
-
-        payload = {
-            "contents": [
-                {"parts": [{"text": user_msg}]}
-            ]
-        }
-
-        response = requests.post(url, json=payload)
-        result = response.json()
-
-        if response.status_code != 200 or "candidates" not in result:
-            # return API error safely
-            return JsonResponse(
-                {"reply": "API error. Check API key, billing, or request limits.", "details": result},
-                status=502
-            )
-
-        reply = result["candidates"][0]["content"]["parts"][0]["text"]
-        return JsonResponse({"reply": reply})

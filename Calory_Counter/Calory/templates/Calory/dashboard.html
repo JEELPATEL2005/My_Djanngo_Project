@@ -21,20 +21,7 @@
 </head>
 <body>
 
-    <h3>Last 7 Days</h3>
-
-<ul>
-{% for d in history %}
-<li>
-{{ d.date }} - {{ d.total_calories }} kcal
-{% if d.healthy %} ✅ {% else %} ❌ {% endif %}
-</li>
-{% endfor %}
-</ul>
-
-<h3>Nutrition Status</h3>
-
-<p>{{ deficiency }}</p>
+   
 
 
 
@@ -62,6 +49,58 @@
     <p><strong>Today Calories:</strong> {{ total }} kcal</p>
 </div>
 
+ <h4>Today's Meals</h4>
+
+
+
+<h3>🍳 Breakfast</h3>
+<ul>
+{% for m in breakfasts %}
+    <li>{{ m.food.name }} - {{ m.calories }} kcal</li>
+{% empty %}
+    <li>No breakfast added</li>
+{% endfor %}
+</ul>
+
+
+<h3>🍛 Lunch</h3>
+<ul>
+{% for m in lunches %}
+    <li>{{ m.food.name }} - {{ m.calories }} kcal</li>
+{% empty %}
+    <li>No lunch added</li>
+{% endfor %}
+</ul>
+
+
+<h3>🌙 Dinner</h3>
+<ul>
+{% for m in dinners %}
+    <li>{{ m.food.name }} - {{ m.calories }} kcal</li>
+{% empty %}
+    <li>No dinner added</li>
+{% endfor %}
+</ul>
+
+
+<h3>🍪 Snacks</h3>
+<ul>
+{% for m in snacks %}
+    <li>{{ m.food.name }} - {{ m.calories }} kcal</li>
+{% empty %}
+    <li>No snacks added</li>
+{% endfor %}
+</ul>
+
+
+
+<h3>Nutrition Status</h3>
+
+<p>{{ deficiency }}</p>
+
+
+
+
 <div class="message">
     {{ msg }}
 </div>
@@ -70,6 +109,16 @@
     <a href="/add-meal/">Add Meal</a>
     <a href="/logout/">Logout</a>
 </div>
+
+<a href="{% url 'summary' %}?date={{ selected_date|date:'Y-m-d' }}" 
+   class="nav-btn">
+
+   📊 View Summary
+
+</a>
+
+</form>
+
 
 </div>
 

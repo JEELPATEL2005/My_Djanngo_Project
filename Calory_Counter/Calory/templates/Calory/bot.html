@@ -47,12 +47,12 @@ button{padding:8px;}
 
 function send(){
 
- let msg=document.getElementById("q").value;
+ let msg = document.getElementById("q").value;
  if(msg=="") return;
 
- let chat=document.getElementById("chat");
+ let chat = document.getElementById("chat");
 
- chat.innerHTML+="<p><b>You:</b> "+msg+"</p>";
+ chat.innerHTML += "<p><b>You:</b> "+msg+"</p>";
 
  fetch("/bot/api/",{
 
@@ -60,42 +60,65 @@ function send(){
 
    headers:{
      "Content-Type":"application/json",
-     "X-CSRFToken":"{{ csrf_token }}"
+     "X-CSRFToken": csrftoken   // ✅ FIXED
    },
 
-   body:JSON.stringify({text:msg})
+   body: JSON.stringify({ text: msg })
 
  })
 
- .then(r=>r.json())
- .then(d=>{
+ .then(r => r.json())
 
-   chat.innerHTML+="<p><b>Bot:</b> "+d.reply+"</p>";
-   chat.scrollTop=chat.scrollHeight;
+ .then(d => {
+
+   if(d.reply){
+     chat.innerHTML += "<p><b>Bot:</b> "+d.reply+"</p>";
+   }else{
+     chat.innerHTML += "<p><b>Bot:</b> Error getting response.</p>";
+   }
+
+   chat.scrollTop = chat.scrollHeight;
+
+ })
+
+ .catch(err => {
+
+   chat.innerHTML += "<p><b>Bot:</b> Network error.</p>";
 
  });
 
- document.getElementById("q").value="";
+
+ document.getElementById("q").value = "";
 }
 
+
+// CSRF helper
 function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-      const cookies = document.cookie.split(";");
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.startsWith(name + "=")) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
+
+  let cookieValue = null;
+
+  if (document.cookie && document.cookie !== "") {
+
+    const cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+
+      const cookie = cookies[i].trim();
+
+      if (cookie.startsWith(name + "=")) {
+
+        cookieValue = decodeURIComponent(
+          cookie.substring(name.length + 1)
+        );
+
+        break;
       }
     }
-    return cookieValue;
   }
 
-  const csrftoken = getCookie("csrftoken");
+  return cookieValue;
+}
+
+const csrftoken = getCookie("csrftoken");
 
 </script>
-
-</body>
-</html>
