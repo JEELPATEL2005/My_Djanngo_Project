@@ -22,6 +22,9 @@ urlpatterns=[
     path('foods/delete/<int:food_id>/', views.delete_food, name='delete_food'),
 
     path("update-weight/", views.update_weight, name="update_weight"),
+    
+    path("summary/", views.summary_page, name="summary"),
+
 
     path("bot/", views.bot_page, name="bot_page"),
 

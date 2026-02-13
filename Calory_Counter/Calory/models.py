@@ -27,7 +27,19 @@ class Profile(models.Model):
 # FOOD DATABASE
 class Food(models.Model):
 
+    CATEGORY = [
+        ("breakfast","Breakfast"),
+        ("lunch","Lunch"),
+        ("dinner","Dinner"),
+        ("snack","Snack"),
+    ]
+
     name = models.CharField(max_length=100)
+
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY
+    )   
 
     calories_100g = models.FloatField()
     protein = models.FloatField()
@@ -38,8 +50,6 @@ class Food(models.Model):
 
     verified = models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.name
 
 
 # MEAL LOG
@@ -72,8 +82,8 @@ class DailySummary(models.Model):
     healthy = models.BooleanField()
     streak = models.IntegerField()
 
-    deficiency = models.CharField(
-        max_length=100,
-        default="Not calculated"
-    )   # ✅ NEW
+    deficiency = models.CharField(max_length=100, default="Not calculated")
+
+    target = models.FloatField(default=0)   # ✅ ADD THIS
+
 

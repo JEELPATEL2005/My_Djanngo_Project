@@ -290,6 +290,9 @@
 </head>
 <body>
 
+<<<<<<< HEAD
+   
+=======
 <div class="dashboard-wrapper">
 
     <!-- Header with Title and Actions -->
@@ -344,6 +347,7 @@
             <div class="stat-value">{{ total }} kcal</div>
             <div class="stat-subtitle">Out of {{ profile.target }} kcal target</div>
         </div>
+>>>>>>> e9a9a76fee31d018a0ed74013da1fb7544f1d0b3
 
         <!-- Nutrition Status Card -->
         <div class="stat-card nutrition">
@@ -363,6 +367,92 @@
     </div>
     {% endif %}
 
+<<<<<<< HEAD
+<a href="{% url 'update_weight' %}">
+    Update Weight
+</a>
+
+
+
+    <a href="{% url 'bot_page' %}" class="bot-btn">
+    🤖 Open Chat Bot
+</a>
+
+
+<div class="container">
+
+<h2>Dashboard</h2>
+
+<div class="card">
+    <p><strong>BMR:</strong> {{ profile.bmr }}</p>
+    <p><strong>Daily Target:</strong> {{ profile.target }} kcal</p>
+</div>
+
+<div class="card">
+    <p><strong>Today Calories:</strong> {{ total }} kcal</p>
+</div>
+
+ <h4>Today's Meals</h4>
+
+
+
+<h3>🍳 Breakfast</h3>
+<ul>
+{% for m in breakfasts %}
+    <li>{{ m.food.name }} - {{ m.calories }} kcal</li>
+{% empty %}
+    <li>No breakfast added</li>
+{% endfor %}
+</ul>
+
+
+<h3>🍛 Lunch</h3>
+<ul>
+{% for m in lunches %}
+    <li>{{ m.food.name }} - {{ m.calories }} kcal</li>
+{% empty %}
+    <li>No lunch added</li>
+{% endfor %}
+</ul>
+
+
+<h3>🌙 Dinner</h3>
+<ul>
+{% for m in dinners %}
+    <li>{{ m.food.name }} - {{ m.calories }} kcal</li>
+{% empty %}
+    <li>No dinner added</li>
+{% endfor %}
+</ul>
+
+
+<h3>🍪 Snacks</h3>
+<ul>
+{% for m in snacks %}
+    <li>{{ m.food.name }} - {{ m.calories }} kcal</li>
+{% empty %}
+    <li>No snacks added</li>
+{% endfor %}
+</ul>
+
+
+
+<h3>Nutrition Status</h3>
+
+<p>{{ deficiency }}</p>
+
+
+
+
+<div class="message">
+    {{ msg }}
+</div>
+
+<div class="nav">
+    <a href="/add-meal/">Add Meal</a>
+    <a href="/logout/">Logout</a>
+</div>
+=======
     <!-- History Section -->
     <div class="history-section">
         <div class="section-title">
@@ -388,6 +478,17 @@
             {% endif %}
         </ul>
     </div>
+>>>>>>> e9a9a76fee31d018a0ed74013da1fb7544f1d0b3
+
+<a href="{% url 'summary' %}?date={{ selected_date|date:'Y-m-d' }}" 
+   class="nav-btn">
+
+   📊 View Summary
+
+</a>
+
+</form>
+
 
 </div>
 

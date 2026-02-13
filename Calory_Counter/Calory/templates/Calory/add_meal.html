@@ -1,4 +1,4 @@
-{% load static %}
+{% comment %} {% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -339,6 +339,174 @@
     </div>
 
 </div>
+
+</body>
+</html> {% endcomment %}
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Meal</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+
+        .container{
+            width: 400px;
+            margin: 40px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #ddd;
+        }
+
+        h2{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        select,input,button{
+            width:100%;
+            padding:10px;
+            margin-bottom:15px;
+        }
+
+        button{
+            background:#2196f3;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#1976d2;
+        }
+
+        .back{
+            display:block;
+            text-align:center;
+            margin-top:15px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Add Meal</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <!-- Meal Type -->
+        <label>Meal Type</label>
+
+        <select name="meal" id="mealSelect" required>
+
+            <option value="">Select Meal Type</option>
+
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="snack">Snack</option>
+
+        </select>
+
+
+        <!-- Food -->
+        <label>Food</label>
+
+        <select name="food" id="foodSelect" required>
+
+            <option value="">Select Food</option>
+
+            {% for food in foods %}
+            <option
+                value="{{ food.id }}"
+                data-category="{{ food.category }}"
+            >
+                {{ food.name }}
+            </option>
+            {% endfor %}
+
+        </select>
+
+
+        <!-- Quantity -->
+        <label>Quantity (Servings)</label>
+
+        <input
+            type="number"
+            name="qty"
+            step="0.1"
+            min="0.1"
+            value="1"
+            required
+        >
+
+
+        <!-- Submit -->
+        <button type="submit">
+            Add Meal
+        </button>
+
+    </form>
+
+
+    <a href="{% url 'dashboard' %}" class="back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+
+<!-- ================= JS FILTER ================= -->
+
+<script>
+
+const mealSelect = document.getElementById("mealSelect");
+const foodSelect = document.getElementById("foodSelect");
+
+
+mealSelect.addEventListener("change", function(){
+
+    const selectedMeal = this.value;
+    const options = foodSelect.options;
+
+
+    for(let i = 0; i < options.length; i++){
+
+        const option = options[i];
+        const category = option.getAttribute("data-category");
+
+        // Skip "Select Food"
+        if(!category){
+            option.style.display = "block";
+            continue;
+        }
+
+        // Show only matching foods
+        if(category === selectedMeal){
+            option.style.display = "block";
+        }
+        else{
+            option.style.display = "none";
+        }
+    }
+
+    // Reset food selection
+    foodSelect.value = "";
+
+});
+
+</script>
+
 
 </body>
 </html>
