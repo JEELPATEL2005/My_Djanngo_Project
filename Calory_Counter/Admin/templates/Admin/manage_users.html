@@ -179,6 +179,9 @@
                                     Grant Admin
                                 {% endif %}
                             </a>
+                            <a href="{% url 'admin_delete_user' user.id %}" class="btn" style="background: #ff6b6b; margin-left: 8px;" onclick="return confirm(`Are you sure you want to delete user &quot;{{ user.username }}&quot;? This action cannot be undone.`)">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
                         {% else %}
                             <span style="color: #999;">—</span>
                         {% endif %}
@@ -192,5 +195,6 @@
             </tbody>
         </table>
     </div>
+
 </body>
 </html>

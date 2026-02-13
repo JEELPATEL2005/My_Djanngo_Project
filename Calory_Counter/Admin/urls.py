@@ -20,6 +20,7 @@ urlpatterns = [
     # User Management
     path('users/', views.manage_users, name='admin_manage_users'),
     path('users/toggle-admin/<int:user_id>/', views.toggle_admin, name='admin_toggle_admin'),
+    path('users/delete/<int:user_id>/', views.delete_user, name='admin_delete_user'),
     
     # Admin Management
     path('admins/', views.manage_admins, name='admin_manage_admins'),

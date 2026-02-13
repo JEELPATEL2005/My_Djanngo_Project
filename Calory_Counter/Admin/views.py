@@ -210,6 +210,24 @@ def toggle_admin(request, user_id):
 
 @admin_required
 @login_required
+def delete_user(request, user_id):
+    """Delete a user account"""
+    
+    user = get_object_or_404(User, id=user_id)
+    
+    # Prevent admin from deleting themselves
+    if user == request.user:
+        return render(request, 'Admin/manage_users.html', {
+            'users': User.objects.all(),
+            'error': 'You cannot delete your own account.'
+        })
+    
+    user.delete()
+    return redirect('admin_manage_users')
+
+
+@admin_required
+@login_required
 def manage_admins(request):
     """Manage admin users and their roles"""
     
