@@ -1,8 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>AI Bot</title>
+{% load static %}
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Bot - Calory Counter</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* AI Bot Specific Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+<<<<<<< HEAD
 <style>
 
 body{
@@ -68,24 +82,334 @@ button:hover{
 
 </style>
 
-</head>
+=======
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
+        .bot-wrapper {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .bot-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            max-height: 700px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bot-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .bot-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .bot-header i {
+            font-size: 28px;
+        }
+
+        .bot-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f9f9f9;
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 8px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .user-message .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .bot-message .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .input-section {
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        #q {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        #q:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #q::placeholder {
+            color: #999;
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:active {
+            transform: translateY(0);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .back-link-wrapper {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            transform: translateX(-3px);
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+            gap: 10px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #ddd;
+        }
+
+        @media (max-width: 600px) {
+            .bot-container {
+                height: 85vh;
+                max-height: none;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .input-section {
+                padding: 15px;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            #q {
+                padding: 10px 12px 10px 40px;
+                font-size: 13px;
+            }
+
+            .send-btn {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+
+            .bot-header h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+>>>>>>> e9a9a76fee31d018a0ed74013da1fb7544f1d0b3
+</head>
 <body>
 
-<div class="box">
+<div class="bot-wrapper">
+    <div class="bot-container">
+        
+        <!-- Header -->
+        <div class="bot-header">
+            <h2>
+                <i class="fas fa-robot"></i> AI Nutrition Bot
+            </h2>
+            <p class="bot-subtitle">Ask me anything about your nutrition and fitness goals</p>
+        </div>
 
-<h3>🤖 AI Bot</h3>
+        <!-- Chat Display -->
+        <div class="chat-box" id="chat">
+            <div class="empty-state">
+                <i class="fas fa-comments"></i>
+                <p>Start a conversation with the AI Bot</p>
+            </div>
+        </div>
 
-<div id="chat"></div>
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="input-wrapper">
+                <i class="fas fa-comment-dots"></i>
+                <input 
+                    type="text" 
+                    id="q" 
+                    placeholder="Ask anything about nutrition..."
+                    onkeypress="if(event.key==='Enter') send()"
+                >
+            </div>
+            <button class="send-btn" onclick="send()">
+                <i class="fas fa-paper-plane"></i> Send
+            </button>
+        </div>
 
-<input id="q" placeholder="Ask anything...">
-<button onclick="send()">Send</button>
+        <!-- Back Link -->
+        <div class="back-link-wrapper">
+            <a href="{% url 'dashboard' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
 
-<br><br>
-<a href="{% url 'dashboard' %}">⬅ Back</a>
-
+    </div>
 </div>
-
 
 <script>
 
@@ -102,7 +426,10 @@ function cleanText(text){
 
 
 function send(){
+    let msg = document.getElementById("q").value;
+    if(msg.trim() == "") return;
 
+<<<<<<< HEAD
  let msg = document.getElementById("q").value;
  if(msg=="") return;
 
@@ -114,11 +441,55 @@ function send(){
    </div>
  `;
 
+=======
+    let chat = document.getElementById("chat");
+    
+    // Remove empty state if exists
+    const emptyState = chat.querySelector('.empty-state');
+    if(emptyState) emptyState.remove();
 
- fetch("/bot/api/",{
+    // Add user message
+    let userDiv = document.createElement("div");
+    userDiv.className = "message user-message";
+    userDiv.innerHTML = '<div class="message-content">' + escapeHtml(msg) + '</div>';
+    chat.appendChild(userDiv);
 
-   method:"POST",
+    // Scroll to bottom
+    chat.scrollTop = chat.scrollHeight;
+>>>>>>> e9a9a76fee31d018a0ed74013da1fb7544f1d0b3
 
+    // Send to server
+    fetch("/bot/api/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({text: msg})
+    })
+    .then(r => r.json())
+    .then(d => {
+        // Add bot message
+        let botDiv = document.createElement("div");
+        botDiv.className = "message bot-message";
+        botDiv.innerHTML = '<div class="message-content">' + escapeHtml(d.reply) + '</div>';
+        chat.appendChild(botDiv);
+        
+        // Scroll to bottom
+        chat.scrollTop = chat.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        let errorDiv = document.createElement("div");
+        errorDiv.className = "message bot-message";
+        errorDiv.innerHTML = '<div class="message-content" style="color: #c33;">Sorry, I encountered an error. Please try again.</div>';
+        chat.appendChild(errorDiv);
+    });
+
+    document.getElementById("q").value = "";
+}
+
+<<<<<<< HEAD
    headers:{
      "Content-Type":"application/json",
      "X-CSRFToken": csrftoken
@@ -176,6 +547,29 @@ function getCookie(name){
  return cookieValue;
 }
 
+=======
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+>>>>>>> e9a9a76fee31d018a0ed74013da1fb7544f1d0b3
 const csrftoken = getCookie("csrftoken");
 
 </script>

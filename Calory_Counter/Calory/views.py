@@ -11,6 +11,7 @@ import requests
 from django.http import JsonResponse
 from django.conf import settings
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 
 
 
@@ -49,6 +50,15 @@ def user_login(request):
 
         if user:
             login(request,user)
+            
+            # Check if user is an admin
+            try:
+                from Admin.models import AdminUser
+                admin_profile = AdminUser.objects.get(user=user, is_active=True)
+                return redirect('admin_dashboard')
+            except:
+                pass
+            
             return redirect('profile')
 
     return render(request,'Calory/login.html')
@@ -458,6 +468,7 @@ def bot_api(request):
         return JsonResponse({"reply": reply})
 
 
+<<<<<<< HEAD
     except requests.exceptions.Timeout:
         return JsonResponse({
             "reply": "AI is taking too long. Try again."
@@ -473,3 +484,113 @@ def bot_api(request):
         }, status=500)
 
 
+=======
+# ---------------- MANAGE FOODS (CRUD) ----------------
+@login_required
+def foods_list(request):
+
+    # Only staff can manage food items
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    foods = Food.objects.all().order_by('name')
+
+    return render(request, 'Calory/manage_foods.html', {'foods': foods})
+
+
+@login_required
+def add_food(request):
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        try:
+            calories = float(request.POST.get('calories_100g') or 0)
+        except ValueError:
+            calories = 0
+        try:
+            protein = float(request.POST.get('protein') or 0)
+        except ValueError:
+            protein = 0
+        try:
+            carbs = float(request.POST.get('carbs') or 0)
+        except ValueError:
+            carbs = 0
+        try:
+            fat = float(request.POST.get('fat') or 0)
+        except ValueError:
+            fat = 0
+        try:
+            serving = float(request.POST.get('serving_grams') or 100)
+        except ValueError:
+            serving = 100
+        verified = True if request.POST.get('verified') else False
+
+        if name:
+            Food.objects.create(
+                name=name,
+                calories_100g=calories,
+                protein=protein,
+                carbs=carbs,
+                fat=fat,
+                serving_grams=serving,
+                verified=verified
+            )
+
+        return redirect('foods_list')
+
+    return render(request, 'Calory/edit_food.html', {'food': None})
+
+
+@login_required
+def edit_food(request, food_id):
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    food = get_object_or_404(Food, id=food_id)
+
+    if request.method == 'POST':
+        food.name = request.POST.get('name', food.name).strip()
+        try:
+            food.calories_100g = float(request.POST.get('calories_100g') or food.calories_100g)
+        except ValueError:
+            pass
+        try:
+            food.protein = float(request.POST.get('protein') or food.protein)
+        except ValueError:
+            pass
+        try:
+            food.carbs = float(request.POST.get('carbs') or food.carbs)
+        except ValueError:
+            pass
+        try:
+            food.fat = float(request.POST.get('fat') or food.fat)
+        except ValueError:
+            pass
+        try:
+            food.serving_grams = float(request.POST.get('serving_grams') or food.serving_grams)
+        except ValueError:
+            pass
+        food.verified = True if request.POST.get('verified') else False
+        food.save()
+
+        return redirect('foods_list')
+
+    return render(request, 'Calory/edit_food.html', {'food': food})
+
+
+@login_required
+def delete_food(request, food_id):
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    food = get_object_or_404(Food, id=food_id)
+    if request.method == 'POST' or request.method == 'GET':
+        food.delete()
+
+    return redirect('foods_list')
+>>>>>>> e9a9a76fee31d018a0ed74013da1fb7544f1d0b3

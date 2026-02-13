@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Manage Foods</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .container { max-width:900px;margin:30px auto;background:#fff;padding:20px;border-radius:8px }
+        table { width:100%;border-collapse:collapse }
+        th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+        .actions a{margin-right:8px}
+        .btn { padding:8px 12px;background:#667eea;color:#fff;border-radius:6px;text-decoration:none }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Manage Food Items</h2>
+    <p><a class="btn" href="{% url 'add_food' %}">Add Food</a> <a href="/dashboard/" class="btn" style="background:#aaa">Back</a></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Calories/100g</th>
+                <th>Protein</th>
+                <th>Carbs</th>
+                <th>Fat</th>
+                <th>Serving (g)</th>
+                <th>Verified</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in foods %}
+            <tr>
+                <td>{{ f.name }}</td>
+                <td>{{ f.calories_100g }}</td>
+                <td>{{ f.protein }}</td>
+                <td>{{ f.carbs }}</td>
+                <td>{{ f.fat }}</td>
+                <td>{{ f.serving_grams }}</td>
+                <td>{% if f.verified %}Yes{% else %}No{% endif %}</td>
+                <td class="actions">
+                    <a href="{% url 'edit_food' f.id %}">Edit</a>
+                    <a href="{% url 'delete_food' f.id %}" onclick="return confirm('Delete this food?');">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8">No food items found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

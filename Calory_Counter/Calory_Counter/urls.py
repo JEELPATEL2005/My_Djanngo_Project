@@ -30,9 +30,18 @@ Including another URLconf
 
 
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include, re_path
+from django.shortcuts import redirect
 
-urlpatterns=[
-    path('admin/',admin.site.urls),
-    path('',include('Calory.urls')),
+def _redirect_to_app_login(request):
+    return redirect('/')
+
+urlpatterns = [
+    # Redirect Django admin's login/logout (including querystring variants)
+    re_path(r'^admin/login/?$', _redirect_to_app_login),
+    re_path(r'^admin/logout/.*$', _redirect_to_app_login),
+
+    path('admin/', admin.site.urls),
+    path('admin-panel/', include('Admin.urls')),
+    path('', include('Calory.urls')),
 ]

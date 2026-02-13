@@ -15,6 +15,12 @@ urlpatterns=[
 
     path('add-meal/',views.add_meal),
     
+    # Food management
+    path('foods/', views.foods_list, name='foods_list'),
+    path('foods/add/', views.add_food, name='add_food'),
+    path('foods/edit/<int:food_id>/', views.edit_food, name='edit_food'),
+    path('foods/delete/<int:food_id>/', views.delete_food, name='delete_food'),
+
     path("update-weight/", views.update_weight, name="update_weight"),
     
     path("summary/", views.summary_page, name="summary"),
