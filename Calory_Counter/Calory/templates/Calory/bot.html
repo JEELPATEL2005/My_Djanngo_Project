@@ -4,26 +4,70 @@
 <title>AI Bot</title>
 
 <style>
-body{font-family:Arial;background:#eee;}
+
+body{
+  font-family:Arial;
+  background:#f2f2f2;
+}
 
 .box{
-  width:400px;
-  margin:50px auto;
+  width:800px;          /* Bigger */
+  margin:40px auto;
   background:white;
   padding:20px;
-  border-radius:10px;
+  border-radius:12px;
+  box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 #chat{
-  height:300px;
+  height:650px;         /* Bigger */
   border:1px solid #ccc;
-  overflow:auto;
-  padding:10px;
+  overflow-y:auto;
+  padding:15px;
+  background:#fafafa;
+  border-radius:8px;
+  margin-bottom:10px;
 }
 
-input{width:75%;padding:8px;}
-button{padding:8px;}
+/* Message bubbles */
+.user-msg{
+  background:#d9ecff;
+  padding:8px 12px;
+  border-radius:10px;
+  margin:5px 0;
+  text-align:right;
+}
+
+.bot-msg{
+  background:#e9ffe6;
+  padding:8px 12px;
+  border-radius:10px;
+  margin:5px 0;
+  text-align:left;
+}
+
+input{
+  width:75%;
+  padding:8px;
+  border-radius:5px;
+  border:1px solid #ccc;
+}
+
+button{
+  padding:8px 14px;
+  border:none;
+  background:#2196f3;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#1976d2;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -45,6 +89,18 @@ button{padding:8px;}
 
 <script>
 
+function cleanText(text){
+
+  // Remove markdown symbols
+  return text
+    .replace(/\*\*/g, "")
+    .replace(/###/g, "")
+    .replace(/\*/g, "")
+    .replace(/#/g, "")
+    .replace(/\n+/g, "<br>");
+}
+
+
 function send(){
 
  let msg = document.getElementById("q").value;
@@ -52,7 +108,12 @@ function send(){
 
  let chat = document.getElementById("chat");
 
- chat.innerHTML += "<p><b>You:</b> "+msg+"</p>";
+ chat.innerHTML += `
+   <div class="user-msg">
+     <b>You:</b> ${msg}
+   </div>
+ `;
+
 
  fetch("/bot/api/",{
 
@@ -60,7 +121,7 @@ function send(){
 
    headers:{
      "Content-Type":"application/json",
-     "X-CSRFToken": csrftoken   // ✅ FIXED
+     "X-CSRFToken": csrftoken
    },
 
    body: JSON.stringify({ text: msg })
@@ -71,19 +132,15 @@ function send(){
 
  .then(d => {
 
-   if(d.reply){
-     chat.innerHTML += "<p><b>Bot:</b> "+d.reply+"</p>";
-   }else{
-     chat.innerHTML += "<p><b>Bot:</b> Error getting response.</p>";
-   }
+   let reply = cleanText(d.reply);
+
+   chat.innerHTML += `
+     <div class="bot-msg">
+       <b>Bot:</b><br>${reply}
+     </div>
+   `;
 
    chat.scrollTop = chat.scrollHeight;
-
- })
-
- .catch(err => {
-
-   chat.innerHTML += "<p><b>Bot:</b> Network error.</p>";
 
  });
 
@@ -92,31 +149,31 @@ function send(){
 }
 
 
-// CSRF helper
-function getCookie(name) {
+// CSRF
+function getCookie(name){
 
-  let cookieValue = null;
+ let cookieValue=null;
 
-  if (document.cookie && document.cookie !== "") {
+ if(document.cookie && document.cookie!==""){
 
-    const cookies = document.cookie.split(";");
+  const cookies=document.cookie.split(";");
 
-    for (let i = 0; i < cookies.length; i++) {
+  for(let i=0;i<cookies.length;i++){
 
-      const cookie = cookies[i].trim();
+   const cookie=cookies[i].trim();
 
-      if (cookie.startsWith(name + "=")) {
+   if(cookie.startsWith(name+"=")){
 
-        cookieValue = decodeURIComponent(
-          cookie.substring(name.length + 1)
-        );
+    cookieValue=decodeURIComponent(
+      cookie.substring(name.length+1)
+    );
 
-        break;
-      }
-    }
+    break;
+   }
   }
+ }
 
-  return cookieValue;
+ return cookieValue;
 }
 
 const csrftoken = getCookie("csrftoken");

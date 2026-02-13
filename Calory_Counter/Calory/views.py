@@ -279,7 +279,7 @@ def update_summary(user, today, total, profile):
             'streak': streak,
             'deficiency': deficiency,
 
-            'target': profile.target   # ⭐ IMPORTANT
+            'target': profile.target  
         }
     )
 
@@ -332,93 +332,8 @@ def summary_page(request):
         "deficiency": deficiency,
 
     })
-
-
-
-# ---------------- BOT PAGE ----------------
-def bot_page(request):
-    return render(request, "Calory/bot.html")
-
-
-@login_required
-def bot_api(request):
-
-    if request.method != "POST":
-        return JsonResponse({"reply": "Invalid request."}, status=400)
-
-
-    try:
-        data = json.loads(request.body)
-        user_msg = data.get("text", "").strip()
-
-        if not user_msg:
-            return JsonResponse({"reply": "Empty message."})
-
-
-        url = (
-            "https://generativelanguage.googleapis.com/v1beta/models/"
-            "gemini-1.5-flash:generateContent"
-            f"?key={settings.GEMINI_API_KEY}"
-        )
-
-
-        payload = {
-            "contents": [
-                {
-                    "parts": [
-                        {"text": user_msg}
-                    ]
-                }
-            ]
-        }
-
-
-        response = requests.post(
-            url,
-            json=payload,
-            timeout=20   # ✅ prevent hanging
-        )
-
-
-        result = response.json()
-
-
-        # ❗ API error
-        if response.status_code != 200:
-            return JsonResponse({
-                "reply": "Gemini API error. Try later.",
-                "details": result
-            }, status=502)
-
-
-        # ❗ Empty response
-        if "candidates" not in result:
-            return JsonResponse({
-                "reply": "No response from AI."
-            })
-
-
-        reply = result["candidates"][0]["content"]["parts"][0]["text"]
-
-
-        return JsonResponse({"reply": reply})
-
-
-    except requests.exceptions.Timeout:
-        return JsonResponse({
-            "reply": "AI is taking too long. Try again."
-        })
-
-
-    except Exception as e:
-
-        print("Bot Error:", e)
-
-        return JsonResponse({
-            "reply": "Server error. Contact admin."
-        }, status=500)
-
-
+    
+    
 @login_required
 def update_weight(request):
 
@@ -468,4 +383,93 @@ def update_weight(request):
     return render(request,"Calory/update_weight.html",{
         "profile": profile
     })
+
+
+
+
+# ---------------- BOT PAGE ----------------
+def bot_page(request):
+    return render(request, "Calory/bot.html")
+
+
+@login_required
+def bot_api(request):
+
+    if request.method != "POST":
+        return JsonResponse({"reply": "Invalid request."}, status=400)
+
+
+    try:
+        data = json.loads(request.body)
+        user_msg = data.get("text", "").strip()
+
+        if not user_msg:
+            return JsonResponse({"reply": "Empty message."})
+
+
+        url = (
+            "https://generativelanguage.googleapis.com/v1beta/models/"
+            "gemini-2.5-flash:generateContent"
+            f"?key=AIzaSyDb314st3Htb3U9S8J80uxFqvLZQcCsBes"
+        )
+
+
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {"text": user_msg}
+                    ]
+                }
+            ]
+        }
+
+
+        response = requests.post(
+            url,
+            json=payload,
+            timeout=20   # ✅ prevent hanging
+        )
+
+
+        result = response.json()
+        print(response.status_code, result) # Debug log
+
+
+
+        # ❗ API error
+        if response.status_code != 200:
+            return JsonResponse({
+                "reply": "Gemini API error. Try later.",
+                "details": result
+            }, status=502)
+
+
+        # ❗ Empty response
+        if "candidates" not in result:
+            return JsonResponse({
+                "reply": "No response from AI."
+            })
+
+
+        reply = result["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+
+        return JsonResponse({"reply": reply})
+
+
+    except requests.exceptions.Timeout:
+        return JsonResponse({
+            "reply": "AI is taking too long. Try again."
+        })
+
+
+    except Exception as e:
+
+        print("Bot Error:", e)
+
+        return JsonResponse({
+            "reply": "Server error. Contact admin."
+        }, status=500)
+
 
