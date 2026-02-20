@@ -31,6 +31,7 @@ def motivation(status):
 
 def detect_deficiency(meals):
 
+ 
     protein = sum(m.food.protein * m.qty for m in meals)
     carbs = sum(m.food.carbs * m.qty for m in meals)
     fat = sum(m.food.fat * m.qty for m in meals)
@@ -51,5 +52,18 @@ def detect_deficiency(meals):
     if protein >= 50 and carbs >= 130 and fat >= 20:
         return "✅ Healthy Diet"
     
+    if not meals.exists():
+        return "No meals recorded"
+    
+def recalc_day(user, day):
+    from .models import Meal, Profile
+    from .views import update_summary
+
+    profile = Profile.objects.get(user=user)
+
+    meals = Meal.objects.filter(user=user, date=day)
+    total = sum(m.calories for m in meals)
+
+    update_summary(user, day, total, profile)
 
 

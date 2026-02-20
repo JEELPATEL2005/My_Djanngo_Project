@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.contrib import admin
+from django.urls import path, include, re_path
+from django.shortcuts import redirect
 
 load_dotenv()
 
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Calory',
+    'Admin'
 ]
 
 MIDDLEWARE = [
@@ -129,10 +133,13 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/login/'
 
+# Custom admin login form
+# ...existing code...
 
+LOGIN_URL = 'admin_login'  # Name of your login view
+LOGIN_REDIRECT_URL = 'admin_dashboard'  # Name of your dashboard view
+LOGOUT_REDIRECT_URL = 'admin_login'  # Where to go after logout
 
-
+# Remove all the other conflicting LOGIN settings
+# Custom admin logout template

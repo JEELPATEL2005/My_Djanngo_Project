@@ -1,0 +1,4 @@
+Django>=4.0
+python-dotenv
+requests
+reportlab>=4.0.0

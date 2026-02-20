@@ -14,25 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# from django.contrib import admin
-# from django.urls import include, path
-# from django.conf import settings
-# from django.conf.urls.static import static
-
-# from . import views
-
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path('home/', views.Home, name='home'),
-#     path('about/', views.About, name='about'),
-#     path('test/', include("Calory.urls"))
-# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
+from django.shortcuts import redirect
 
-urlpatterns=[
-    path('admin/',admin.site.urls),
-    path('',include('Calory.urls')),
+def redirect_to_custom_admin_login(request):
+    """Redirect admin login to custom admin login page"""
+    return redirect('/custom-admin/login/')
+
+urlpatterns = [
+    # Redirect Django admin login to custom admin login page
+#path('admin/login/', redirect_to_custom_admin_login),
+    path('admin/', admin.site.urls),
+    path('custom-admin/', include('Admin.urls')),
+    path('', include('Calory.urls')),
 ]

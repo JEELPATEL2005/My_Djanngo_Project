@@ -27,7 +27,7 @@ class Profile(models.Model):
 # FOOD DATABASE
 class Food(models.Model):
 
-    CATEGORY = [
+    MEAL_CHOICES = [
         ("breakfast","Breakfast"),
         ("lunch","Lunch"),
         ("dinner","Dinner"),
@@ -35,19 +35,12 @@ class Food(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-
-    category = models.CharField(
-        max_length=20,
-        choices=CATEGORY
-    )   
-
+    meal_type = models.CharField(max_length=20, choices=MEAL_CHOICES)   
     calories_100g = models.FloatField()
     protein = models.FloatField()
     carbs = models.FloatField()
     fat = models.FloatField()
-
-    serving_grams = models.FloatField()
-
+    serving_grams = models.FloatField(default=100)
     verified = models.BooleanField(default=True)
 
 

@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Meal</title>
+    <style>
+        body{
+            font-family:Arial;
+            background:#f4f6fb;
+            padding:30px;
+        }
+
+        .box{
+            max-width:500px;
+            margin:auto;
+            background:white;
+            padding:25px;
+            border-radius:12px;
+            box-shadow:0 10px 25px rgba(0,0,0,.1);
+        }
+
+        input,select{
+            width:100%;
+            padding:10px;
+            margin-top:8px;
+            margin-bottom:15px;
+            border-radius:6px;
+            border:1px solid #ddd;
+        }
+
+        .btn{
+            padding:10px 15px;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+            text-decoration:none;
+        }
+
+        .save{ background:#ffc107; }
+        .cancel{ background:#ccc; margin-left:10px;}
+    </style>
+</head>
+<body>
+
+<div class="box">
+
+<h2>✏ Edit Meal</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Food</label>
+    <input type="text" value="{{ meal.food.name }}" disabled>
+
+    <label>Meal Type</label>
+    <input type="text" value="{{ meal.meal }}" disabled>
+
+    <label>Quantity</label>
+    <input type="number" name="qty" step="0.1" value="{{ meal.qty }}" required>
+
+    <button type="submit" class="btn save">Update Meal</button>
+
+    <!-- IMPORTANT FIX HERE -->
+    <a href="{% url 'meal_page' %}?date={{ meal.date|date:'Y-m-d' }}" class="btn cancel">
+        Cancel
+    </a>
+
+</form>
+
+</div>
+</body>
+</html>
