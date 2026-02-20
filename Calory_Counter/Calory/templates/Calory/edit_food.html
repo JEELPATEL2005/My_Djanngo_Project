@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% if food %}Edit{% else %}Add{% endif %} Food</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .container { max-width:640px;margin:30px auto;background:#fff;padding:20px;border-radius:8px }
+        label{display:block;margin-top:10px}
+        input[type=text],input[type=number]{width:100%;padding:8px;margin-top:6px}
+        .btn{display:inline-block;padding:8px 12px;background:#667eea;color:#fff;border-radius:6px;text-decoration:none;margin-top:12px}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>{% if food %}Edit{% else %}Add{% endif %} Food</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Name</label>
+        <input type="text" name="name" value="{{ food.name|default_if_none:'' }}" required>
+
+        <label>Calories per 100g</label>
+        <input type="number" step="0.01" name="calories_100g" value="{{ food.calories_100g|default_if_none:100 }}">
+
+        <label>Protein (g)</label>
+        <input type="number" step="0.01" name="protein" value="{{ food.protein|default_if_none:0 }}">
+
+        <label>Carbs (g)</label>
+        <input type="number" step="0.01" name="carbs" value="{{ food.carbs|default_if_none:0 }}">
+
+        <label>Fat (g)</label>
+        <input type="number" step="0.01" name="fat" value="{{ food.fat|default_if_none:0 }}">
+
+        <label>Serving grams</label>
+        <input type="number" step="0.1" name="serving_grams" value="{{ food.serving_grams|default_if_none:100 }}">
+
+        <label>
+            <input type="checkbox" name="verified" {% if food and food.verified %}checked{% endif %}> Verified
+        </label>
+
+        <button class="btn" type="submit">Save</button>
+        <a class="btn" href="{% url 'foods_list' %}" style="background:#aaa">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

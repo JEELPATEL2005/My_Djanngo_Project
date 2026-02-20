@@ -36,6 +36,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404
 
 
 
@@ -74,6 +75,15 @@ def user_login(request):
 
         if user:
             login(request,user)
+            
+            # Check if user is an admin
+            try:
+                from Admin.models import AdminUser
+                admin_profile = AdminUser.objects.get(user=user, is_active=True)
+                return redirect('admin_dashboard')
+            except:
+                pass
+            
             return redirect('profile')
 
     return render(request,'Calory/login.html')
@@ -451,6 +461,10 @@ def bot_page(request):
     return render(request, "Calory/bot.html")
 
 
+def bot_page(request):
+    return render(request, "Calory/bot.html")
+
+
 @login_required
 def bot_api(request):
 
@@ -469,7 +483,7 @@ def bot_api(request):
         url = (
             "https://generativelanguage.googleapis.com/v1beta/models/"
             "gemini-2.5-flash:generateContent"
-            f"?key=AIzaSyDb314st3Htb3U9S8J80uxFqvLZQcCsBes"
+            f"?key=AIzaSyBR1dMD40HRNvilB0_37fxRzRPVlqLv-DQ"
         )
 
 
@@ -530,8 +544,7 @@ def bot_api(request):
         return JsonResponse({
             "reply": "Server error. Contact admin."
         }, status=500)
-
-
+        
 
 def update_summary(user, day, total, profile):
 
