@@ -13,16 +13,13 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from django.contrib import admin
-from django.urls import path, include, re_path
-from django.shortcuts import redirect
-
-load_dotenv()
-
-GEMINI_API_KEY=os.getenv("GEMINI_API_KEY")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env")
+
+GEMINI_API_KEY=os.getenv("GEMINI_API_KEY")
 
 
 # Quick-start development settings - unsuitable for production

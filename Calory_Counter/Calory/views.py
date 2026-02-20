@@ -18,6 +18,9 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 
 
 
@@ -483,7 +486,7 @@ def bot_api(request):
         url = (
             "https://generativelanguage.googleapis.com/v1beta/models/"
             "gemini-2.5-flash:generateContent"
-            f"?key=AIzaSyBR1dMD40HRNvilB0_37fxRzRPVlqLv-DQ"
+            f"?key={settings.GEMINI_API_KEY}"
         )
 
 
